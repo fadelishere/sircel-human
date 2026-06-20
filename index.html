@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth overflow-x-hidden">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>KSPK - Keluarga Sederhana Papah Kim</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<style>
+:root {
+--bg-dark: #090E17;
+--accent-silver: #94A3B8;
+--text-light: #F8FAFC;
+}
+
+body {
+font-family: 'Poppins', sans-serif;
+background-color: var(--bg-dark);
+color: var(--text-light);
+}
+
+/* --- SPLASH SCREEN ANIMATIONS --- */
+.no-scroll {
+overflow: hidden;
+height: 100vh;
+}
+
+#splash-screen {
+position: fixed;
+inset: 0;
+z-index: 99999;
+background-color: var(--bg-dark);
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+transition: opacity 0.8s ease-in-out, visibility 0.8s ease-in-out;
+}
+
+.splash-hidden {
+opacity: 0;
+visibility: hidden;
+}
+
+.splash-logo {
+animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-glow {
+0%, 100% { transform: scale(1); }
+50% { transform: scale(1.08); }
+}
+
+.loading-bar-container {
+width: 150px;
+height: 2px;
+background: rgba(255, 255, 255, 0.1);
+border-radius: 4px;
+overflow: hidden;
+position: relative;
+margin-top: 30px;
+}
+
+.loading-bar {
+position: absolute;
+top: 0;
+left: -100%;
+height: 100%;
+width: 100%;
+background: var(--accent-silver);
+animation: loading-slide 1.5s ease-in-out infinite;
+}
+
+@keyframes loading-slide {
+0% { left: -100%; }
+50% { left: 0; }
+100% { left: 100%; }
+}
+/* -------------------------------- */
+
+/* Ambient Glow Backgrounds */
+.bg-glow-container {
+position: fixed;
+top: 0;
+left: 0;
+width: 100%;
+height: 100vh;
+z-index: -1;
+overflow: hidden;
+pointer-events: none;
+}
+.glow-orb-1 {
+position: absolute;
+top: -10%;
+left: -10%;
+width: 50vw;
+height: 50vw;
+background: radial-gradient(circle, rgba(148, 163, 184, 0.08) 0%, transparent 70%);
+}
+.glow-orb-2 {
+position: absolute;
+bottom: -20%;
+right: -10%;
+width: 60vw;
+height: 60vw;
+background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+}
+
+/* Premium Glassmorphism */
+.glass {
+background: rgba(255, 255, 255, 0.03);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+border: 1px solid rgba(255, 255, 255, 0.05);
+box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.glass-hover:hover {
+background: rgba(255, 255, 255, 0.06);
+border: 1px solid rgba(255, 255, 255, 0.15);
+transform: translateY(-5px);
+transition: all 0.4s ease;
+}
+
+/* 3D Flip Card System */
+.perspective-1000 { perspective: 1000px; }
+.transform-style-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+.rotate-y-180 { transform: rotateY(180deg); }
+
+.flip-card { height: 170px; } 
+@media (min-width: 400px) { .flip-card { height: 200px; } }
+@media (min-width: 640px) { .flip-card { height: 380px; } }
+@media (min-width: 1024px) { .flip-card { height: 420px; } }
+
+/* Mobile 3-col card adjustments */
+@media (max-width: 639px) {
+.flip-card .member-name { font-size: 0.6rem; line-height: 1.2; }
+.flip-card .member-role { font-size: 0.38rem; line-height: 1.1; white-space: normal; }
+.flip-card .member-num  { font-size: 0.6rem; top: 6px; left: 6px; }
+.flip-card .card-pad    { padding: 8px; }
+.flip-card .role-dot    { width: 4px; height: 4px; }
+/* Back face mobile — overflow scroll agar teks joke panjang tetap terbaca & posisi ke tengah */
+.flip-card .back-pad    {
+    padding: 10px 6px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+    align-items: center;
+}
+.flip-card .back-quote  {
+    font-size: 0.5rem;
+    line-height: 1.45;
+    margin-bottom: 6px;
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    display: block !important;
+    line-clamp: unset !important;
+    -webkit-line-clamp: unset !important;
+    overflow: visible !important;
+}
+.flip-card .back-name   { font-size: 0.6rem; margin-bottom: 4px; flex-shrink: 0; }
+.flip-card .back-icon   { width: 20px; height: 20px; margin-bottom: 6px; flex-shrink: 0; }
+.flip-card .back-ig     { font-size: 0.45rem; padding: 3px 6px; gap: 3px; flex-shrink: 0; }
+}
+
+/* Gallery mobile */
+.gallery-item-text      { display: none; }
+
+/* Gallery responsive overlay typography untuk mobile */
+@media (max-width: 639px) {
+    .gallery-item > div[class*="bg-gradient"] {
+        padding: 0 !important;
+        justify-content: center !important;
+        align-items: center !important;
+    }
+
+    .gallery-item span,
+    .gallery-item h4,
+    .gallery-item p {
+        display: none !important;
+    }
+
+    .gallery-item a {
+        margin: 0 !important;
+    }
+
+    .gallery-item span {
+        font-size: 0.5rem;
+        padding: 3px 6px !important;
+        margin-bottom: 4px !important;
+        line-height: 1.2 !important;
+        white-space: normal;
+        word-break: break-word;
+        text-align: center;
+    }
+
+    .gallery-item h4 {
+        font-size: 0.75rem;
+        margin-bottom: 4px !important;
+        line-height: 1.2 !important;
+        letter-spacing: -0.02em;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .gallery-item p {
+        font-size: 0.6rem;
+        line-height: 1.3 !important;
+        margin: 0 !important;
+        word-wrap: break-word;
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+/* Gallery responsive untuk tablet */
+@media (min-width: 640px) and (max-width: 1023px) {
+    .gallery-item > div[class*="bg-gradient"] {
+        padding: 16px 14px !important;
+    }
+
+    .gallery-item span {
+        font-size: 0.7rem;
+        padding: 5px 10px !important;
+        margin-bottom: 8px !important;
+    }
+
+    .gallery-item h4 {
+        font-size: 0.95rem;
+        margin-bottom: 8px !important;
+        line-height: 1.35 !important;
+    }
+
+    .gallery-item p {
+        font-size: 0.75rem;
+        line-height: 1.45 !important;
+    }
+}
+
+/* Flip via class (tap mobile + hover desktop) */
+.flip-card.flipped .flip-content { transform: rotateY(180deg); }
+@media (hover: hover) {
+.flip-card:hover .flip-content { transform: rotateY(180deg); }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-dark); }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-silver); }
+
+/* --- INTERACTIVE MOBILE BOTTOM NAVIGATION --- */
+.bottom-nav-container {
+    display: none;
+}
+
+@media (max-width: 639px) {
+    .bottom-nav-container {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 58px;
+        z-index: 999;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(9, 14, 23, 0.35) 100%);
+        backdrop-filter: blur(32px) saturate(200%);
+        -webkit-backdrop-filter: blur(32px) saturate(200%);
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        border-radius: 24px 24px 0 0;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0 12px;
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6), 
+                    inset 0 1px 1px rgba(255, 255, 255, 0.2);
+    }
+
+    #mobile-menu-btn { display: none !important; }
+    #navbar-bg { justify-content: center !important; }
+    
+    body { padding-bottom: 74px; }
+}
+
+.nav-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 100%;
+    text-decoration: none;
+    color: #64748B;
+    transition: color 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 2;
+    background: transparent;
+}
+
+.nav-text {
+    position: absolute;
+    font-size: 9px;
+    font-weight: 600;
+    bottom: 5px;
+    opacity: 0;
+    transform: translateY(8px) scale(0.8);
+    transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    letter-spacing: 0.03em;
+    color: #94A3B8;
+}
+
+.nav-item.active {
+    color: #F8FAFC;
+}
+
+.nav-item.active .nav-icon {
+    transform: translateY(-12px);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.03) 100%);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: #F8FAFC;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 8px 24px rgba(255, 255, 255, 0.15),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.nav-item.active .nav-text {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    color: #F8FAFC;
+}
+
+.nav-icon svg {
+    width: 18px;
+    height: 18px;
+    transition: all 0.3s ease;
+}
+
+/* --- ANIMASI TYPING CURSOR --- */
+.typing-cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1.15em;
+    background-color: #94A3B8;
+    margin-left: 4px;
+    animation: blink-cursor 0.8s step-end infinite;
+    vertical-align: middle;
+}
+@keyframes blink-cursor {
+    from, to { background-color: transparent }
+    50% { background-color: #94A3B8; }
+}
+
+/* --- PERBAIKAN HERO SECTION UNTUK MOBILE --- */
+@media (max-width: 639px) {
+    /* Sembunyikan konten teks asli di mobile secara permanen */
+    #hero .z-10.max-w-4xl {
+        display: none !important;
+    }
+
+    /* Tambahkan teks ke gambar background menggunakan pseudo-element ::after */
+    #hero::after {
+        content: "Keluarga Sederhana\A Papah Kim.\A\A Est. 2023"; /* Gunakan \A untuk baris baru */
+        display: block;
+        position: absolute;
+        bottom: 16px; /* Sesuai dengan padding pb-16 asli di mobile */
+        left: 0;
+        right: 0;
+        z-index: 20; /* Lebih tinggi dari gradien inset-0 */
+        white-space: pre-wrap; /* Penting untuk baris baru \A */
+        text-align: center;
+        padding-left: 1.5rem; /* Sesuai dengan px-6 asli di mobile */
+        padding-right: 1.5rem;
+        
+        /* Tiru gaya H1: text-3xl, font-bold, mb-2, text-white, drop-shadow-2xl */
+        color: #FFFFFF;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 700; /* bold */
+        font-size: 1.875rem; /* text-3xl */
+        line-height: 1.25;
+        text-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); /* drop-shadow-2xl */
+        letter-spacing: -0.025em; /* tracking-tight */
+    }
+}
+</style>
+</head>
+<body class="antialiased no-scroll overflow-x-hidden relative">
+
+<div id="splash-screen">
+    <img src="images/logo3.png" alt="Logo KSPK" class="w-32 h-32 md:w-48 md:h-48 rounded-full splash-logo object-cover">
+    <div class="loading-bar-container">
+        <div class="loading-bar"></div>
+    </div>
+    <p class="text-[#94A3B8] text-[10px] md:text-xs uppercase tracking-[0.4em] mt-5 font-semibold animate-pulse">
+        Memasuki Markas...
+    </p>
+</div>
+
+<div class="bg-glow-container">
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+</div>
+
+<nav id="navbar" class="hidden sm:flex fixed top-0 w-full z-40 transition-all duration-700 ease-out transform -translate-y-full opacity-0 py-4 px-4 justify-center">
+    <div id="navbar-bg" class="glass rounded-full px-6 py-3 flex justify-between items-center w-full max-w-5xl transition-all duration-500 shadow-lg relative">
+        
+        <a href="#hero" class="hidden sm:block font-bold text-lg tracking-widest text-white hover:text-gray-200 transition z-50">
+            KSPK
+        </a>
+        
+        <div class="hidden sm:flex items-center space-x-2 text-sm font-medium text-gray-300">
+            <a href="#hero" class="hover:text-white hover:bg-white/10 px-4 py-2 rounded-xl transition duration-300">Home</a>
+            <a href="#manifesto" class="hover:text-white hover:bg-white/10 px-4 py-2 rounded-xl transition duration-300">Story</a>
+            <a href="#anggota" class="hover:text-white hover:bg-white/10 px-4 py-2 rounded-xl transition duration-300">The Family</a>
+            <a href="#galeri" class="hover:text-white hover:bg-white/10 px-4 py-2 rounded-xl transition duration-300">Gallery</a>
+        </div>
+
+        <button id="mobile-menu-btn" class="sm:hidden text-gray-300 hover:text-white focus:outline-none z-50 p-1">
+            <svg class="w-6 h-6 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path id="hamburger-icon" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
+            </svg>
+        </button>
+
+        <div id="mobile-menu" class="absolute top-[120%] left-0 w-full rounded-2xl p-4 flex flex-col space-y-2 opacity-0 invisible scale-95 -translate-y-4 transition-all ease-[cubic-bezier(0.16,1,0.3,1)] duration-500 origin-top sm:hidden shadow-2xl z-40" style="background: rgba(5, 8, 18, 0.97); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(148, 163, 184, 0.2);">
+            <a href="#hero" class="mobile-link text-center text-gray-100 hover:text-white hover:bg-white/15 px-4 py-3 rounded-xl opacity-0 -translate-y-2 transition-all duration-300 font-medium tracking-wide">Home</a>
+            <a href="#manifesto" class="mobile-link text-center text-gray-100 hover:text-white hover:bg-white/15 px-4 py-3 rounded-xl opacity-0 -translate-y-2 transition-all duration-300 font-medium tracking-wide">Story</a>
+            <a href="#anggota" class="mobile-link text-center text-gray-100 hover:text-white hover:bg-white/15 px-4 py-3 rounded-xl opacity-0 -translate-y-2 transition-all duration-300 font-medium tracking-wide">The Family</a>
+            <a href="#galeri" class="mobile-link text-center text-gray-100 hover:text-white hover:bg-white/15 px-4 py-3 rounded-xl opacity-0 -translate-y-2 transition-all duration-300 font-medium tracking-wide">Gallery</a>
+        </div>
+    </div>
+</nav>
+
+<section id="hero" class="relative min-h-[85vh] sm:min-h-screen flex flex-col items-center justify-end text-center px-6 sm:px-4 pb-16 sm:pb-20 md:pb-24 bg-contain bg-top sm:bg-cover sm:bg-center bg-no-repeat" style="background-image: url('images/bg-halamanpertama.png');">
+    
+    <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#090E17]/80 to-[#090E17] sm:from-black/40 sm:via-[#090E17]/80 sm:to-[#090E17]"></div>
+
+    <div class="z-10 max-w-4xl mx-auto w-full flex flex-col items-center">
+        <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-bold mb-2 sm:mb-4 tracking-tight leading-[1.25] sm:leading-tight text-white drop-shadow-2xl" data-aos="fade-up" data-aos-duration="1000">
+            Keluarga Sederhana<br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-100 via-gray-300 to-gray-500 font-extrabold tracking-wide inline-block mt-1 sm:mt-0">
+                Papah Kim.
+            </span>
+        </h1>
+        <p class="text-xs sm:text-base md:text-lg max-w-xs sm:max-w-lg mx-auto font-light leading-relaxed drop-shadow-lg text-gray-300 tracking-[0.15em] sm:tracking-normal mt-3 sm:mt-0" data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000">
+            Est. 2023
+        </p>
+    </div>
+</section>
+
+<section id="manifesto" class="pt-10 pb-12 px-4 sm:px-6 max-w-6xl mx-auto text-center relative z-10 w-full overflow-hidden">
+    <div class="glass p-8 sm:p-12 md:p-20 rounded-[2rem] sm:rounded-[3rem] relative overflow-hidden" data-aos="zoom-in-up">
+        <div class="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 bg-white opacity-5 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none"></div>
+        
+        <h2 class="text-xs sm:text-base uppercase tracking-[0.3em] text-[#94A3B8] mb-6 sm:mb-8 font-semibold">Our Story</h2>
+        
+        <p class="text-xl sm:text-3xl md:text-4xl leading-relaxed font-light text-gray-200 mb-6 sm:mb-8">
+            "Berdiri sejak 2023, sesekali <strong class="font-bold text-white">duduk</strong> kalau lagi capek berdiri"
+        </p>
+        
+        <div class="w-16 h-px bg-gradient-to-r from-transparent via-slate-600 to-transparent mx-auto mb-6 sm:mb-8"></div>
+        
+        <p class="text-sm sm:text-base md:text-lg leading-relaxed font-light text-gray-400 max-w-3xl mx-auto">
+            Bermula dari sekumpulan siswa yang dipertemukan di bangku kelas, lalu jadi teman nongkrong, jadi tempat curhat, jadi partner ngeluh, sampai akhirnya jadi saksi hidup dari segala drama dan kebodohannya.
+        </p>
+    </div>
+</section>
+
+<section id="anthem" class="pb-16 px-4 sm:px-6 max-w-3xl mx-auto relative z-10 w-full" data-aos="fade-up">
+    <div class="glass p-5 sm:p-8 rounded-[2rem] border border-white/10 flex flex-col items-center">
+        <h3 class="text-xs sm:text-sm uppercase tracking-[0.3em] text-[#94A3B8] mb-6 font-semibold">Our Anthem</h3>
+        <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/5DqSZFvWvSWg5eyCDi0CuW?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+</section>
+
+<section id="anggota" class="pt-8 pb-24 px-4 sm:px-6 relative z-10 w-full">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex flex-col items-center mb-12 sm:mb-20 text-center">
+            <h2 class="text-xs sm:text-sm uppercase tracking-[0.3em] text-[#94A3B8] mb-3 font-semibold" data-aos="fade-up">The Roster</h2>
+            <h3 class="text-3xl md:text-5xl font-bold text-white" data-aos="fade-up" data-aos-delay="100">Meet The Family</h3>
+        </div>
+        
+        <div id="members-container" class="grid grid-cols-3 gap-3 sm:gap-8 lg:gap-10"></div>
+    </div>
+</section>
+
+<section id="galeri" class="py-16 sm:py-24 px-4 sm:px-6 max-w-7xl mx-auto relative z-10 w-full">
+    <div class="flex flex-col items-center mb-12 sm:mb-16 text-center">
+        <h2 class="text-xs sm:text-sm uppercase tracking-[0.3em] text-[#94A3B8] mb-3 font-semibold" data-aos="fade-up">Records</h2>
+        <h3 class="text-3xl md:text-5xl font-bold text-white" data-aos="fade-up" data-aos-delay="100">Captured Moments</h3>
+    </div>
+    
+    <div class="columns-3 gap-2 sm:gap-6 space-y-2 sm:space-y-6 [column-fill:_balance]">
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="0">
+            <img src="images/galery/foto1.png" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Momen Kumpul Sekolah">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Memory Lane</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Kumpul Santai</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Foto diambil pada tanggal 18 Agustus 2023, foto tersebut diambil sebagai kenang-kenangan sebelum lulus.</p>
+                <a href="detail.html?id=foto1" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+        
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="100">
+            <img src="images/galery/foto2.png" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Momen Ngakak">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Pure Joy</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Sesi Tawa Abis</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Jam kosong, candaan nggak ada habisnya. Momen tawa lepas yang bikin perut sakit tapi hati senang.</p>
+                <a href="detail.html?id=foto2" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+        
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="200">
+            <img src="images/galery/foto3.png" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Momen Formal">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Formasi Lengkap</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Hari Penting</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Momen langka di mana semuanya on-time, seragam lengkap, dan siap untuk foto kelas yang formal tapi tetap asik.</p>
+                <a href="detail.html?id=foto3" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="0">
+            <img src="images/galery/foto4.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Sinergi Putih Abu">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">White Uniform</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Sinergi Putih Abu</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Formasi andalan kalau matahari lagi terik-teriknya. Panas bukan halangan buat tetap eksis bareng.</p>
+                <a href="detail.html?id=foto4" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="100">
+            <img src="images/galery/foto5.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Double Peace">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Solid Squad</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Double Peace</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Satu komando, semua angkat jari. Ekspresi lepas tanpa beban pikiran tugas esok hari.</p>
+                <a href="detail.html?id=foto5" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="200">
+            <img src="images/galery/foto6.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Teropong Masa Depan">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Fun Times</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Teropong Masa Depan</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Pose absurd yang mulai keluar saat kamera depan handphone sudah jepret lebih dari tiga kali.</p>
+                <a href="detail.html?id=foto6" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="0">
+            <img src="images/galery/foto7.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Geng Lesehan">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Batik Day</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Geng Lesehan</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Rebahan santai di rumput lapangan terbuka setelah penat atau emang dasarnya mager berjamaah.</p>
+                <a href="detail.html?id=foto7" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="100">
+            <img src="images/galery/foto8.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Senyum Simetris">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Casual Blue</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Senyum Simetris</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Mencari sudut kamera terbaik demi mengamankan estetika feed bersama anak-anak angkatan.</p>
+                <a href="detail.html?id=foto8" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+
+        <div class="gallery-item break-inside-avoid relative group overflow-hidden glass flex flex-col" data-aos="fade-up" data-aos-delay="200">
+            <img src="images/galery/foto9.jpg" class="w-full h-auto object-cover group-hover:scale-105 transition duration-700" alt="Salam Rock n Roll">
+            <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex flex-col justify-end p-6 translate-y-4 group-hover:translate-y-0">
+                <span class="inline-block px-2 py-1 bg-white/20 backdrop-blur-sm rounded-full text-xs text-white mb-3 w-max">Outdoors</span>
+                <h4 class="text-white font-bold text-xl mb-2 leading-tight">Salam Rock n Roll</h4>
+                <p class="text-gray-300 text-sm font-light leading-relaxed">Penutupan sesi foto dengan energi penuh dan gaya bebas andalan sebelum kembali ke jam pelajaran.</p>
+                <a href="detail.html?id=foto9" class="block sm:hidden mt-3 w-max px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/20 rounded-full text-[10px] text-white font-medium tracking-wide transition-all active:scale-95">Lihat Detail</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="gallery-toggle-container" class="flex justify-center mt-12 hidden">
+        <button id="btn-toggle-gallery" class="px-4 py-2 glass rounded-full text-xs font-semibold uppercase tracking-widest text-gray-300 hover:text-white hover:bg-white/10 transition duration-300 focus:outline-none">
+            Show More
+        </button>
+    </div>
+
+    <div class="max-w-3xl mx-auto mt-10 sm:mt-16 px-4" data-aos="fade-up">
+        <div class="glass p-6 sm:p-10 rounded-2xl sm:rounded-[2rem] text-center relative overflow-hidden border border-white/10 shadow-2xl">
+            <div class="absolute top-0 left-0 w-24 h-24 bg-white opacity-[0.02] rounded-full blur-2xl -ml-5 -mt-5 pointer-events-none"></div>
+            <p class="text-sm sm:text-lg md:text-xl font-light italic leading-relaxed text-gray-300 tracking-wide flex items-center justify-center min-h-[130px] sm:min-h-[90px] md:min-h-[70px] w-full m-0">
+                <span>
+                    <span id="typing-text"></span><span class="typing-cursor"></span>
+                </span>
+            </p>
+        </div>
+    </div>
+</section>
+
+<footer id="basecamp" class="pt-16 sm:pt-24 pb-8 relative z-10 bg-gradient-to-b from-transparent to-[#05080f] w-full overflow-hidden">
+    <div class="max-w-7xl mx-auto px-6 mb-12 sm:mb-16">
+        <div class="w-full h-px bg-gradient-to-r from-transparent via-gray-700 to-transparent"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-2 gap-10 sm:gap-12 mb-16 items-start">
+        <div data-aos="fade-right">
+            <div class="flex items-center gap-4 mb-6">
+                <img src="images/logo3.png" alt="Logo KSPK" class="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover">
+                <div>
+                    <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">KSPK.</h2>
+                    <p class="text-[10px] text-[#94A3B8] uppercase tracking-widest mt-1">Sejak 2023</p>
+                </div>
+            </div>
+            <p class="text-gray-400 text-sm sm:text-base mb-6 sm:mb-8 max-w-sm font-light leading-relaxed">
+                Merajut cerita konyol. Bukan tentang ke mana kita pergi, tapi dengan siapa kita nongkrong.
+            </p>
+            <div class="flex space-x-3 sm:space-x-4">
+                <a href="https://www.tiktok.com/@acenvreborn?" target="_blank" class="px-5 py-2.5 text-xs sm:text-sm glass rounded-full font-medium text-gray-300 hover:text-white hover:bg-white/10 transition duration-300">TikTok</a>
+            </div>
+        </div>
+
+        <div class="flex flex-col md:items-end text-left md:text-right" data-aos="fade-left">
+            <h3 class="text-xs sm:text-sm uppercase tracking-[0.3em] text-[#94A3B8] font-semibold mb-4 sm:mb-6">Titik Kumpul</h3>
+            <div class="glass-hover glass p-5 sm:p-6 rounded-2xl flex md:flex-row-reverse gap-4 sm:gap-5 items-center cursor-pointer max-w-sm">
+                <div class="bg-white/5 border border-white/10 p-3 sm:p-4 rounded-xl flex-shrink-0">
+                    <svg class="w-6 h-6 text-[#94A3B8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-white font-medium text-base sm:text-lg">Markas Rahasia</p>
+                    <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">Titik koordinat sengaja disembunyikan, di karenakan tempatnya sangat sakral.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-6 text-center">
+        <p class="text-[10px] sm:text-xs text-gray-500 font-medium tracking-[0.15em] uppercase">
+            © 2026 Keluarga Sederhana Papah Kim. All Rights Reserved.
+        </p>
+    </div>
+</footer>
+
+<nav class="bottom-nav-container">
+    <a href="#hero" class="nav-item active" data-target="hero">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </span>
+        <span class="nav-text">Home</span>
+    </a>
+    
+    <a href="#manifesto" class="nav-item" data-target="manifesto">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2-2.5z"/><path d="M6 6h10M6 10h10"/></svg>
+        </span>
+        <span class="nav-text">Story</span>
+    </a>
+    
+    <a href="#anggota" class="nav-item" data-target="anggota">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span class="nav-text">Family</span>
+    </a>
+    
+    <a href="#galeri" class="nav-item" data-target="galeri">
+        <span class="nav-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></svg>
+        </span>
+        <span class="nav-text">Gallery</span>
+    </a>
+</nav>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Logika Splash Screen & Animasi Masuk Navbar
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            splash.classList.add('splash-hidden');
+            document.body.classList.remove('no-scroll');
+            
+            const navbar = document.getElementById('navbar');
+            navbar.classList.remove('-translate-y-full', 'opacity-0');
+            navbar.classList.add('translate-y-0', 'opacity-100');
+
+            AOS.init({
+                duration: 800,
+                easing: 'ease-out-cubic',
+                once: false,
+                mirror: true,
+                offset: 30
+            });
+
+            startTyping();
+        }, 2500);
+    });
+
+    // Efek Scroll pada Navbar
+    const navbarBg = document.getElementById('navbar-bg');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbarBg.style.background = "rgba(9, 14, 23, 0.85)";
+            navbarBg.style.borderColor = "rgba(255, 255, 255, 0.15)";
+            navbarBg.style.boxShadow = "0 10px 30px -10px rgba(0,0,0,0.8)";
+        } else {
+            navbarBg.style.background = "rgba(255, 255, 255, 0.03)";
+            navbarBg.style.borderColor = "rgba(255, 255, 255, 0.05)";
+            navbarBg.style.boxShadow = "none";
+        }
+    });
+
+    // Logika Mobile Menu (Hamburger) dengan Staggered Link Animation
+    const mobileBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-link');
+    const hamburgerIcon = document.getElementById('hamburger-icon');
+
+    function toggleMenu() {
+        const isExpanded = mobileMenu.classList.contains('opacity-100');
+        if (isExpanded) {
+            mobileMenu.classList.remove('opacity-100', 'visible', 'scale-100', 'translate-y-0');
+            mobileMenu.classList.add('opacity-0', 'invisible', 'scale-95', '-translate-y-4');
+            hamburgerIcon.setAttribute('d', 'M4 6h16M4 12h16m-7 6h7'); 
+            
+            mobileLinks.forEach(link => {
+                link.classList.remove('opacity-100', 'translate-y-0');
+                link.classList.add('opacity-0', '-translate-y-2');
+            });
+        } else {
+            mobileMenu.classList.remove('opacity-0', 'invisible', 'scale-95', '-translate-y-4');
+            mobileMenu.classList.add('opacity-100', 'visible', 'scale-100', 'translate-y-0');
+            hamburgerIcon.setAttribute('d', 'M6 18L18 6M6 6l12 12'); 
+            
+            mobileLinks.forEach((link, idx) => {
+                setTimeout(() => {
+                    link.classList.remove('opacity-0', '-translate-y-2');
+                    link.classList.add('opacity-100', 'translate-y-0');
+                }, 100 + (idx * 60)); 
+            });
+        }
+    }
+
+    mobileBtn.addEventListener('click', toggleMenu);
+
+    mobileLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            if(mobileMenu.classList.contains('opacity-100')) {
+                toggleMenu();
+            }
+        });
+    });
+
+    // Render Anggota Dinamis dengan DOM Manipulation 
+    const members = [
+        { id: "01", name: "Fadel Naya", role: "Menteri Teknologi", joke: "Kalau hidup ada tombol undo, udah saya pencet berulang kali.", ig: "@whoisfaddd", img: "images/member/fadelmember.png" },
+        { id: "02", name: "Hafla Early", role: "Menteri Ekonomi", joke: "Kemiskinan di negeri ini akan menurun, menurun ke anak cucu.", ig: "@earlyy_2.0", img: "images/member/haplamember.png" },
+        { id: "03", name: "Faras Haikal", role: "Menteri Agama", joke: "Jangan berharap kepada manusia, berharaplah kepada Allah SWT. Takbir!", ig: "@_mfarrashf", img: "images/member/farasmember.JPG" },
+        { id: "04", name: "Aryudha Eka", role: "Menteri Investasi", joke: "Modal ngayal setiap malam, mimpi pengen jadi miliader.", ig: "@ad_prasstay", img: "images/member/ekomember.JPG" },
+        { id: "05", name: "Fajar Aditya", role: "Menteri Kesehatan", joke: "Jangan begadang. Kata saya jam 2 pagi.", ig: "@adityya__s", img: "images/member/cusnimember.JPG" },
+        { id: "06", name: "Arif Kurniawan", role: "Menteri Pangan", joke: "Kalau ada makanan gratis, saya ada di barisan terdepan.", ig: "@arif_kurnia", img: "images/member/arifmember.JPG" },
+        { id: "07", name: "Riyal Safiq", role: "Menteri Keuangan", joke: "Uang bukan segalanya, tapi dengan adanya uang saya bisa beli ayam geprek.", ig: "@saaffqqq9", img: "images/member/safiqmember.png" },
+        { id: "08", name: "Faiz Setyaji", role: "Menteri Tenagakerja", joke: "Kalau rebahan termasuk pengalaman kerja, mungkin saya sudah senior.", ig: "@faiz__setyaji", img: "images/member/faizmember.JPG" },
+        { id: "09", name: "Evan Akbar", role: "Menteri Pertahanan", joke: "Dihina hina saya diam! Tapi kali ini saya sampaikan, saya akan lawan!", ig: "Tidak diketahui", img: "images/member/evanmember.png" }
+    ];
+
+    const container = document.getElementById('members-container');
+    let membersHTML = '';
+
+    members.forEach((m, index) => { 
+        membersHTML += `
+        <div class="flip-card perspective-1000 cursor-pointer group w-full" data-aos="fade-up" data-aos-delay="${(index % 3) * 100}">
+            <div class="flip-content relative w-full h-full transition-transform duration-700 transform-style-3d">
+                <div class="absolute w-full h-full backface-hidden rounded-2xl overflow-hidden glass border border-white/5">
+                    <div class="member-num absolute z-20 text-[#94A3B8] font-bold text-lg sm:text-xl opacity-60 tracking-widest" style="top:6px;left:6px">${m.id}</div>
+                    <img src="${m.img}" class="w-full h-full object-cover opacity-60 grayscale group-hover:grayscale-0 group-hover:scale-105 transition duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#090E17] via-black/40 to-transparent"></div>
+                    <div class="card-pad absolute bottom-0 w-full p-5 sm:p-8">
+                        <h3 class="member-name text-base sm:text-2xl lg:text-3xl font-bold text-white mb-0.5 sm:mb-1 leading-tight">${m.name}</h3>
+                        <div class="flex items-center gap-1 sm:gap-2">
+                            <div class="role-dot w-1 h-1 sm:w-2 sm:h-2 rounded-full bg-[#94A3B8]"></div>
+                            <p class="member-role text-[#94A3B8] text-[0.38rem] xs:text-[0.45rem] sm:text-xs lg:text-sm uppercase tracking-wider font-semibold sm:line-clamp-1">${m.role}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="back-pad absolute w-full h-full backface-hidden rotate-y-180 rounded-2xl glass p-4 sm:p-10 flex flex-col justify-center items-center text-center border border-white/10">
+                    <div class="back-icon w-7 h-7 sm:w-12 sm:h-12 rounded-full border border-gray-600 mb-2 sm:mb-6 flex items-center justify-center text-gray-400 flex-shrink-0">
+                        <svg class="w-3 h-3 sm:w-6 sm:h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                    </div>
+                    <h3 class="back-name text-sm sm:text-2xl font-bold text-white leading-tight">${m.name}</h3>
+                    <p class="back-quote text-gray-400 text-[0.45rem] sm:text-sm font-light leading-relaxed">"${m.joke}"</p>
+                    
+                    <a href="https://instagram.com/${m.ig.replace('@', '')}" target="_blank" rel="noopener noreferrer" class="back-ig mt-3 sm:mt-5 inline-flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-1 sm:py-2 rounded-full bg-white/5 border border-white/10 text-[0.45rem] sm:text-xs text-gray-300 hover:text-white hover:bg-white/15 transition z-30 pointer-events-auto">
+                        <svg class="w-2 h-2 sm:w-4 sm:h-4 text-slate-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0 3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        <span>${m.ig}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+    
+    container.innerHTML = membersHTML;
+
+    document.querySelectorAll('.flip-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if(e.target.closest('a')) return;
+            this.classList.toggle('flipped');
+        });
+    });
+
+    // === LOGIKA SHOW MORE / SHOW LESS GALERI DI MOBILE ===
+    const galleryItems = document.querySelectorAll('.gallery-item');
+    const toggleGalleryBtn = document.getElementById('btn-toggle-gallery');
+    const toggleContainer = document.getElementById('gallery-toggle-container');
+    let galleryExpanded = false;
+    const MOBILE_LIMIT = 3;
+
+    function updateGallery() {
+        if (window.innerWidth < 640) {
+            toggleContainer.classList.remove('hidden');
+            galleryItems.forEach((item, index) => {
+                if (galleryExpanded) {
+                    item.classList.remove('hidden');
+                    if (typeof AOS !== 'undefined') AOS.refresh();
+                } else {
+                    if (index >= MOBILE_LIMIT) {
+                        item.classList.add('hidden');
+                    } else {
+                        item.classList.remove('hidden');
+                    }
+                }
+            });
+            toggleGalleryBtn.textContent = galleryExpanded ? "Show Less" : "Show More";
+        } else {
+            toggleContainer.classList.add('hidden');
+            galleryItems.forEach(item => item.classList.remove('hidden'));
+        }
+    }
+
+    toggleGalleryBtn.addEventListener('click', () => {
+        galleryExpanded = !galleryExpanded;
+        updateGallery();
+        if (!galleryExpanded) {
+            document.getElementById('galeri').scrollIntoView({ behavior: 'smooth' });
+        }
+    });
+
+    window.addEventListener('load', updateGallery);
+    window.addEventListener('resize', updateGallery);
+
+
+    // === LOGIKA TYPING ANIMATION (KUTIPAN) ===
+    const quoteText = "Tidak semua kenangan dapat diulang. Dokumentasikan setiap kebersamaan dengan orang tersayang sebelum menjadi cerita yang hanya tersimpan dalam ingatan.";
+    const typingContainer = document.getElementById('typing-text');
+    let quoteIndex = 0;
+    const typingSpeed = 55;
+    const resetDelay = 3500;
+
+    function startTyping() {
+        if (quoteIndex < quoteText.length) {
+            typingContainer.textContent += quoteText.charAt(quoteIndex);
+            quoteIndex++;
+            setTimeout(startTyping, typingSpeed);
+        } else {
+            setTimeout(() => {
+                typingContainer.textContent = '';
+                quoteIndex = 0;
+                setTimeout(startTyping, 400);
+            }, resetDelay);
+        }
+    }
+
+
+    // === SINKRONISASI AKTIF INDIKATOR BOTTOM NAVIGATION SAAT SCROLL ===
+    const navItemsBottom = document.querySelectorAll('.nav-item');
+    const sectionsArr = ['hero', 'manifesto', 'anggota', 'galeri'];
+
+    navItemsBottom.forEach(item => {
+        item.addEventListener('click', function() {
+            navItemsBottom.forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    window.addEventListener('scroll', () => {
+        let currentSection = 'hero';
+        
+        sectionsArr.forEach(id => {
+            const section = document.getElementById(id);
+            if (section) {
+                const sectionTop = section.offsetTop;
+                if (window.scrollY >= sectionTop - 250) {
+                    currentSection = id;
+                }
+            }
+        });
+
+        navItemsBottom.forEach(item => {
+            item.classList.remove('active');
+            if (item.dataset.target === currentSection) {
+                item.classList.add('active');
+            }
+        });
+    });
+
+        // === LOGIKA BUKA TAB BARU KHUSUS MOBILE UNTUK DETAIL.HTML ===
+    window.addEventListener('DOMContentLoaded', () => {
+        // Mengecek apakah diakses menggunakan perangkat mobile (< 640px)
+        if (window.innerWidth < 640) {
+            // Mengambil semua link yang menuju ke halaman detail.html
+            const detailLinks = document.querySelectorAll('a[href^="detail.html"]');
+            
+            detailLinks.forEach(link => {
+                // Memaksa link terbuka di tab baru
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            });
+        }
+    });
+</script>
+</body>
+</html>
