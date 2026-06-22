@@ -370,55 +370,50 @@ transition: all 0.4s ease;
 
 /* --- HERO SECTION MOBILE: TEKS OVERLAY DI ATAS BACKGROUND --- */
 @media (max-width: 639px) {
-    /* Hero section: background cover penuh tanpa terpotong, teks overlay di bawah */
+    /* Background proporsional penuh, hilangkan tinggi 100svh agar gap hilang */
     #hero {
-        background-size: cover !important;
-        background-position: center center !important;
-        min-height: 100svh !important;
-        min-height: 100dvh !important;
-        justify-content: flex-end !important;
-        align-items: center !important;
-        padding-bottom: 5rem !important; /* ruang untuk bottom nav */
+        background-size: 100% auto !important; /* Gambar memenuhi lebar layar otomatis */
+        background-position: center top !important; /* Gambar menempel di atas */
+        background-repeat: no-repeat !important;
+        background-color: var(--bg-dark) !important;
+        min-height: 0 !important; /* Menimpa batasan min-height: 100svh bawaan */
+        height: 100vw !important; /* Mengatur tinggi section proporsional dengan lebar layar */
+        justify-content: flex-end !important; /* Mendorong teks ke bawah (menempel pada gambar) */
     }
 
-    /* Gradient overlay: transparan di atas, gelap pekat di bawah agar teks terbaca */
+    /* Gradient overlay digeser ke atas agar teks terbaca jelas di atas foto */
     #hero > .absolute.inset-0 {
         background: linear-gradient(
             to bottom,
-            rgba(9, 14, 23, 0.05) 0%,
-            rgba(9, 14, 23, 0.15) 30%,
-            rgba(9, 14, 23, 0.65) 60%,
-            rgba(9, 14, 23, 0.92) 80%,
-            rgba(9, 14, 23, 1.0) 100%
+            rgba(9, 14, 23, 0) 0%,
+            rgba(9, 14, 23, 0) 30%,
+            rgba(9, 14, 23, 0.7) 60%,
+            rgba(9, 14, 23, 0.95) 100%
         ) !important;
     }
 
-    /* Tampilkan teks overlay — pastikan di atas semua layer */
+    /* Teks diposisikan persis di area bawah batas gambar */
     #hero .z-10.max-w-4xl {
         display: flex !important;
         position: relative;
         z-index: 20;
-        padding-bottom: 0.5rem;
-        width: 100%;
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
+        padding-bottom: 2rem !important; /* Mengunci posisi teks agar tidak terlalu mepet bawah */
     }
 
-    /* H1 ukuran & shadow yang kuat supaya terbaca di atas foto */
+    /* H1 disesuaikan agar ukurannya harmonis dengan skala gambar di mobile */
     #hero h1 {
-        font-size: 2.1rem !important;
+        font-size: 1.85rem !important;
         line-height: 1.2 !important;
-        text-shadow: 0 2px 16px rgba(0,0,0,0.9), 0 4px 32px rgba(0,0,0,0.7) !important;
-        margin-bottom: 0.5rem !important;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.8), 0 4px 40px rgba(0,0,0,0.6) !important;
+        margin-bottom: 0.25rem !important;
     }
 
     /* Subtitle Est. 2023 */
     #hero p {
         font-size: 0.75rem !important;
-        letter-spacing: 0.22em !important;
-        text-shadow: 0 1px 10px rgba(0,0,0,0.95) !important;
-        color: rgba(203, 213, 225, 0.95) !important;
-        margin-top: 0.25rem !important;
+        letter-spacing: 0.2em !important;
+        text-shadow: 0 1px 10px rgba(0,0,0,0.9) !important;
+        color: rgba(203, 213, 225, 0.9) !important;
     }
 }
 
@@ -487,10 +482,9 @@ transition: all 0.4s ease;
     </div>
 </nav>
 
-<section id="hero" class="relative min-h-screen flex flex-col items-center justify-end text-center px-6 sm:px-4 pb-16 sm:pb-20 md:pb-24 bg-cover bg-no-repeat" style="background-image: url('images/bg-halamanpertama.png'); background-position: center center;">
+<section id="hero" class="relative min-h-screen flex flex-col items-center justify-end text-center px-6 sm:px-4 pb-16 sm:pb-20 md:pb-24 bg-cover bg-center bg-no-repeat" style="background-image: url('images/bg-halamanpertama.png');">
     
-    <!-- Overlay: ringan di atas, gelap di bawah agar gambar tetap terlihat & teks mudah dibaca -->
-    <div class="absolute inset-0" style="background: linear-gradient(to bottom, rgba(9,14,23,0.08) 0%, rgba(9,14,23,0.25) 35%, rgba(9,14,23,0.70) 62%, rgba(9,14,23,0.97) 85%, rgba(9,14,23,1) 100%);"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/20 via-[#090E17]/60 to-[#090E17] sm:from-black/40 sm:via-[#090E17]/80 sm:to-[#090E17]"></div>
 
     <div class="z-10 max-w-4xl mx-auto w-full flex flex-col items-center">
         <h1 class="text-3xl xs:text-4xl sm:text-5xl md:text-7xl font-bold mb-2 sm:mb-4 tracking-tight leading-[1.25] sm:leading-tight text-white drop-shadow-2xl" data-aos="fade-up" data-aos-duration="1000">
